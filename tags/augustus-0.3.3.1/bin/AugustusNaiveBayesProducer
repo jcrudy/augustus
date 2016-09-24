@@ -1,3 +1,0 @@
-#!/usr/bin/python2.5
-from augustus.modellib.naive_bayes.producer.Producer import main
-main()
