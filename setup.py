@@ -3,7 +3,7 @@
 import sys
 import os
 from setuptools import setup, Extension
-from setuptools.command.build_ext import build_ext
+from Cython.Distutils import build_ext
 import getopt
 
 import augustus.version
@@ -30,14 +30,14 @@ ext_modules = []
 
 ################################################ optional svgviewer
 
-class svgviewer_build_ext(build_ext):
-    def build_extension(self, extension):
-        try:
-            build_ext.build_extension(self, extension)
-        except:
-            sys.stderr.write("Could not build svgviewer extension, possibly because the prerequisites have not been installed:\n")
-            sys.stderr.write("    sudo apt-get install python-dev libgtk2.0-dev libglib2.0-dev librsvg2-dev libcairo2-dev\n")
-            sys.exit(-1)
+# class svgviewer_build_ext(build_ext):
+#     def build_extension(self, extension):
+#         try:
+#             build_ext.build_extension(self, extension)
+#         except:
+#             sys.stderr.write("Could not build svgviewer extension, possibly because the prerequisites have not been installed:\n")
+#             sys.stderr.write("    sudo apt-get install python-dev libgtk2.0-dev libglib2.0-dev librsvg2-dev libcairo2-dev\n")
+#             sys.exit(-1)
 
 def svgviewer_pkgconfig():
     return [x for x in os.popen("pkg-config --cflags --libs gtk+-2.0 gthread-2.0 librsvg-2.0").read().split(" ") if x.strip() != ""]
@@ -82,6 +82,7 @@ if with_avrostream:
 ################################################ Augustus itself
 
 setup(name="augustus",
+      cmdclass = {'build_ext': build_ext},
       version=augustus.version.__version__,
       description="Augustus: a library for evaluating, producing, and manipulating statistical and data mining models in PMML",
       author="Open Data Group",
@@ -123,6 +124,5 @@ setup(name="augustus",
                    "Topic :: Scientific/Engineering :: Information Analysis",
                    "Topic :: Scientific/Engineering :: Mathematics",
                    ],
-      cmdclass={"build_ext": svgviewer_build_ext},
       ext_modules=ext_modules,
       )
